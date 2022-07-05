@@ -35,9 +35,31 @@ contract Catch is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     // Events
     event NftRequested(uint256 indexed requestId, address requester);
 
-    constructor() VRFConsumerBaseV2() ERC721() {}
+    // constructor(
+    //     address vrfCoordinatorV2,
+    //     uint256 entranceFee,
+    //     bytes32 gasLane,
+    //     uint64 subscriptionId,
+    //     uint32 callbackGasLimit,
+    //     uint256 interval
+    // ) VRFConsumerBaseV2(vrfCoordinatorV2) {
+    //     i_entranceFee = entranceFee;
+    //     i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorV2);
+    //     i_gasLane = gasLane;
+    //     i_subscriptionId = subscriptionId;
+    //     i_callbackGasLimit = callbackGasLimit;
+    // }
 
     function mintDay() private {}
 
     function mintNight() private {}
 }
+
+//TODO
+//set mint function for day and night
+//set chances of minting pokemon tatity
+//set chance of minting shiny pokemon irregardless of pokemon rarity
+//set random pokemonstats
+//TODO-2
+//set pokemon battle
+//set pokemon level ups(refer to defi kingdoms implementation)
