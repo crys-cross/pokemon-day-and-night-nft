@@ -12,9 +12,20 @@ error CatchNft__NeedMoreETHSennt();
 
 contract Catch is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     // Type Declaration
-    enum DayOrNight {
-        Day,
-        Night
+    enum DayEncounter {
+        PIKACHU,
+        CHARMANDER,
+        SQUIRTLE,
+        BULBASAUR,
+        PIDGEY
+    }
+
+    enum NightEncounter {
+        EEVEE,
+        CYNDAQUIUL,
+        TOTODILE,
+        CHIKORITA,
+        HOOTHOOT
     }
 
     // Chainlink VRF Variables
@@ -23,7 +34,7 @@ contract Catch is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     bytes32 private immutable i_gasLane;
     uint32 private immutable i_callbackGasLimit;
     uint16 private constant REQUEST_CONFIRMATIONS = 3;
-    uint32 private constant NUM_WORDS = 1;
+    uint32 private constant NUM_WORDS = 3;
 
     // VRF Helpers
     mapping(uint256 => address) public s_requestIdToSender;
@@ -70,10 +81,20 @@ contract Catch is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         address dogOwner = s_requestIdToSender[requestId];
         uint256 newTokenId = s_tokenCounter;
         uint256 moddedRng = randomWords[0] % MAX_CHANCE_VALUE; //0-99
-        // 0-10 -> PUG
-        // 11-30 -> Shiba Inu
-        // 31-99 -> St. Bernard
-        Breed dogBreed = getBreedFromModdedRng(moddedRng);
+        uint256 moddedRngShiny = randomWords[1] % MAX_CHANCE_VALUE; //0-99 //draft shiny check with shiny function
+        // -DAY-NIGHT
+        // 0-5 -> PIKACHU, EEVEE
+        // 06-15 -> CHARMANDER, CYNDAQUIUL
+        // 16-25 -> SQUIRTLE, TOTODILE
+        // 26-35 -> BULBASAUR, CHIKORITA
+        // 36-99 -> PIDGEY, HOOTHOOT
+        if ((now / 3600) % 24 <= 12) {
+            //used to check if night or day(00-12day, 13-24night)
+            DayEncounter dogBreed = getBreedFromModdedRng(moddedRng);
+        } else {
+            NightEncounter dogBreed = getBreedFromModdedRng(moddedRng);
+        }
+        //function for shiny chance using randomWords[1]
         s_tokenCounter += s_tokenCounter;
         _safeMint(dogOwner, newTokenId);
         _setTokenURI(newTokenId, s_dogTokenUris[uint256(dogBreed)]);
@@ -88,16 +109,44 @@ contract Catch is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         }
     }
 
-    function mintDay() internal {}
+    function getBreedFromModdedRng(uint256 moddedRng) public pure returns (Breed) {
+        uint256 cumulativeSum = 0;
+        uint256[3] memory chanceArray = getChanceArray();
+        for (uint256 i = 0; i < chanceArray.length; i++) {
+            if (moddedRng >= cumulativeSum && moddedRng < cumulativeSum + chanceArray[i]) {
+                return Breed(i);
+            }
+            cumulativeSum += chanceArray[i];
+        }
+        revert RandomIpfsNft__RangeOutOfBounds();
+    }
 
-    function mintNight() internal {}
+    //draft for shiny chance
+    function checkShiny(uint256 moddedRngShiny) internal {
+        if (moddedRngShiny <= 2) {
+            /*turn shiny*/
+        } else {
+            /*use normal*/
+        }
+    }
+
+    function getChanceArray() public pure returns (uint256[3] memory) {
+        return [10, 30, MAX_CHANCE_VALUE];
+    }
 }
 
+//Pokemon Rate
+//Day 5% pikachu gen1(10%,10%,10%) common(pidgey) 65%
+//Night 5% evee gen2(10%,10%,10%) common(hoothoot) 65%
+//Shiny 1%
+
 //TODO
-//set mint function for day and night
-//set chances of minting pokemon tatity
-//set chance of minting shiny pokemon irregardless of pokemon rarity
-//set random pokemonstats
+//draft set enums values with arrays of [normal, shiny]
+//convert now to time✅
+//set mint function for day and night(if statement to call)✅
+//randomWords[0] to choose random pkmn from day or night✅
+//randomWords[1] minting shiny/or not pokemon irregardless of pokemon rarity
+//set random pokemonstats(TBA)
 //TODO-2
 //set pokemon battle
 //set pokemon level ups(refer to defi kingdoms implementation)
