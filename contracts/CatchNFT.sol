@@ -49,15 +49,15 @@ contract Catch is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     bytes32 private immutable i_gasLane;
     uint32 private immutable i_callbackGasLimit;
     uint16 private constant REQUEST_CONFIRMATIONS = 3;
-    uint32 private constant NUM_WORDS = 3;
+    uint32 private constant NUM_WORDS = 2;
 
     // VRF Helpers
     mapping(uint256 => address) public s_requestIdToSender;
 
     // NFT Variables
+    uint256 private immutable i_mintFee;
     uint256 public s_tokenCounter;
     uint256 internal constant MAX_CHANCE_VALUE = 100;
-    uint256 internal immutable i_mintFee;
     string[] internal s_pkmnUris;
     bool private s_initialized;
     // string[] internal s_shinyUris;
@@ -130,39 +130,6 @@ contract Catch is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         emit NftMinted(pkmnType, pkmnOwner);
     }
 
-    // function getDaypkmn(uint256 moddedRng) public pure returns (DayEncounter) {
-    //     uint256 cumulativeSum = 0;
-    //     uint256[3] memory chanceArray = getChanceArray();
-    //     for (uint256 i = 0; i < chanceArray.length; i++) {
-    //         if (moddedRng >= cumulativeSum && moddedRng < cumulativeSum + chanceArray[i]) {
-    //             return DayEncounter(i);
-    //         }
-    //         cumulativeSum += chanceArray[i];
-    //     }
-    //     revert RandomIpfsNft__RangeOutOfBounds();
-    // }
-
-    // function getNightpkmn(uint256 moddedRng) public pure returns (NightEncounter) {
-    //     uint256 cumulativeSum = 0;
-    //     uint256[3] memory chanceArray = getChanceArray();
-    //     for (uint256 i = 0; i < chanceArray.length; i++) {
-    //         if (moddedRng >= cumulativeSum && moddedRng < cumulativeSum + chanceArray[i]) {
-    //             return NightEncounter(i);
-    //         }
-    //         cumulativeSum += chanceArray[i];
-    //     }
-    //     revert RandomIpfsNft__RangeOutOfBounds();
-    // }
-
-    //draft for shiny chance
-    // function checkShiny(uint256 moddedRngShiny) internal {
-    //     if (moddedRngShiny <= 2) {
-    //         /*turn shiny*/
-    //     } else {
-    //         /*use normal*/
-    //     }
-    // }
-
     function getChanceArray() public pure returns (uint256[5] memory) {
         return [5, 15, 25, 35, MAX_CHANCE_VALUE];
     }
@@ -200,6 +167,22 @@ contract Catch is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         if (!success) {
             revert CatchNft__TransferFailed();
         }
+    }
+
+    function getMintFee() public view returns (uint256) {
+        return i_mintFee;
+    }
+
+    function getDogTokenUris(uint256 index) public view returns (string memory) {
+        return s_pkmnUris[index];
+    }
+
+    function getInitialized() public view returns (bool) {
+        return s_initialized;
+    }
+
+    function getTokenCounter() public view returns (uint256) {
+        return s_tokenCounter;
     }
 }
 
