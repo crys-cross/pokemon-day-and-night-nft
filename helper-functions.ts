@@ -14,7 +14,7 @@ export const autoFundCheck = async (
 ) => {
     const chainId = network.config.chainId
     console.log("Checking to see if contract can be auto-funded with LINK:")
-    const amount = networkConfig[chainId]["fundAmount"]
+    const amount = networkConfig[chainId!]["fundAmount"]
     //check to see if user has enough LINK
     const accounts = await ethers.getSigners()
     const signer = accounts[0]
