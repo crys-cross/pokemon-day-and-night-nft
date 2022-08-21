@@ -36,7 +36,7 @@ contract Catch is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         SQUIRTLE,
         BULBASAUR,
         PIDGEY,
-        EEVEE,
+        MARILL,
         CYNDAQUIUL,
         TOTODILE,
         CHIKORITA,
