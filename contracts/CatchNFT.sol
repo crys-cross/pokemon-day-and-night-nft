@@ -111,7 +111,7 @@ contract Catch is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         uint256 moddedRng = randomWords[0] % MAX_CHANCE_VALUE; //0-99
         uint256 moddedRngShiny = randomWords[1] % MAX_CHANCE_VALUE; //0-99 //draft shiny check with shiny function
         // -DAY-NIGHT
-        // 0-5 -> PIKACHU, EEVEE
+        // 0-5 -> PIKACHU, MARILL
         // 06-15 -> CHARMANDER, CYNDAQUIUL
         // 16-25 -> SQUIRTLE, TOTODILE
         // 26-35 -> BULBASAUR, CHIKORITA
