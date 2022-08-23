@@ -100,26 +100,26 @@ const deployCatchNft: DeployFunction = async (hre: HardhatRuntimeEnvironment) =>
 
     log("----------------------------")
     // await storeImages(imagesLocation)
-    // const args = [
-    //     vrfCoordinatorV2Address,
-    //     subscriptionId,
-    //     networkConfig[chainId]["gasLane"],
-    //     networkConfig[chainId]["callbackGasLimit"],
-    //     tokenUris,
-    //     networkConfig[chainId]["mintFee"],
-    // ]
+    const args = [
+        vrfCoordinatorV2Address,
+        networkConfig[chainId]["mintFee"],
+        subscriptionId,
+        networkConfig[chainId]["gasLane"],
+        networkConfig[chainId]["callbackGasLimit"],
+        tokenUris,
+    ]
 
-    // const randomIpfsNft = await deploy("RandomIpfsNft", {
-    //     from: deployer,
-    //     args: args,
-    //     log: true,
-    //     waitConfirmations: waitBlockConfirmations || 1,
-    // })
-    // log("--------------------------------")
-    // if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
-    //     log("Verifying...")
-    //     await verify(randomIpfsNft.address, args)
-    // }
+    const catchNft = await deploy("CatchNft", {
+        from: deployer,
+        args: args,
+        log: true,
+        waitConfirmations: waitBlockConfirmations || 1,
+    })
+    log("--------------------------------")
+    if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
+        log("Verifying...")
+        await verify(catchNft.address, args)
+    }
 }
 
 const handleTokenUris = async () => {

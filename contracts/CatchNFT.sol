@@ -10,25 +10,10 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 error CatchNft__RangeOutOfBounds();
 error CatchNft__NeedMoreETHSennt();
 error CatchNft__TransferFailed();
-error Catch__AlreadyInitialized();
+error CatchNft__AlreadyInitialized();
 
-contract Catch is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
+contract CatchNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     // Type Declaration
-    // enum DayEncounter {
-    //     PIKACHU,
-    //     CHARMANDER,
-    //     SQUIRTLE,
-    //     BULBASAUR,
-    //     PIDGEY
-    // }
-
-    // enum NightEncounter {
-    //     EEVEE,
-    //     CYNDAQUIUL,
-    //     TOTODILE,
-    //     CHIKORITA,
-    //     HOOTHOOT
-    // }
 
     enum Pkmns {
         PIKACHU,
@@ -70,22 +55,16 @@ contract Catch is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
 
     constructor(
         address vrfCoordinatorV2,
-        bytes32 gasLane,
-        uint64 subscriptionId,
         uint256 mintFee,
+        uint64 subscriptionId,
+        bytes32 gasLane,
         uint32 callbackGasLimit,
         string[20] memory pkmnUris
-    )
-        // string[5] memory shinyUris
-        // string[5] memory shinyDayUris,
-        // string[5] memory shinyNightUris
-        VRFConsumerBaseV2(vrfCoordinatorV2)
-        ERC721("Random PKMN NFT", "PM")
-    {
+    ) VRFConsumerBaseV2(vrfCoordinatorV2) ERC721("Random PKMN NFT", "PM") {
         i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorV2);
-        i_gasLane = gasLane;
-        i_subscriptionId = subscriptionId;
         i_mintFee = mintFee;
+        i_subscriptionId = subscriptionId;
+        i_gasLane = gasLane;
         i_callbackGasLimit = callbackGasLimit;
         _initializeContract(pkmnUris);
     }
@@ -136,7 +115,7 @@ contract Catch is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
 
     function _initializeContract(string[20] memory pkmnUris) private {
         if (s_initialized) {
-            revert Catch__AlreadyInitialized();
+            revert CatchNft__AlreadyInitialized();
         }
         s_pkmnUris = pkmnUris;
         s_initialized = true;
