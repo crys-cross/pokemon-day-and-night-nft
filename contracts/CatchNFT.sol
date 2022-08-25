@@ -11,6 +11,7 @@ error CatchNft__RangeOutOfBounds();
 error CatchNft__NeedMoreETHSennt();
 error CatchNft__TransferFailed();
 error CatchNft__AlreadyInitialized();
+error CatchNft__MintSwitchedOffbyOwner();
 
 contract CatchNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     // Type Declaration
@@ -45,9 +46,7 @@ contract CatchNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     uint256 internal constant MAX_CHANCE_VALUE = 100;
     string[] internal s_pkmnUris;
     bool private s_initialized;
-    // string[] internal s_shinyUris;
-    // string[] internal s_shinyDayUris;
-    // string[] internal s_shinyNightUris;
+    bool public mintEnabled;
 
     // Events
     event NftRequested(uint256 indexed requestId, address requester);
@@ -70,6 +69,9 @@ contract CatchNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     }
 
     function catchNft() public payable returns (uint256 requestId) {
+        if (mintEnabled == false) {
+            revert CatchNft__MintSwitchedOffbyOwner();
+        }
         if (msg.value < i_mintFee) {
             revert CatchNft__NeedMoreETHSennt();
         }
@@ -138,6 +140,10 @@ contract CatchNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
             cumulativeSum = chanceArray[i];
         }
         revert CatchNft__RangeOutOfBounds();
+    }
+
+    function mintSwitch(bool _mintEnabled) external onlyOwner {
+        mintEnabled = _mintEnabled; //it allows us to change true or false
     }
 
     function withdraw() public onlyOwner {
