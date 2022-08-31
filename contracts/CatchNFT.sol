@@ -47,6 +47,8 @@ contract CatchNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     string[] internal s_pkmnUris;
     bool private s_initialized;
     bool public mintEnabled;
+    uint256 public s_commonCounter;
+    uint256 public s_shinyCounter;
 
     // Events
     event NftRequested(uint256 indexed requestId, address requester);
@@ -101,11 +103,13 @@ contract CatchNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         //function for shiny chance using randomWords[1]
         uint256 pkmnIndex = 0;
         if (moddedRngShiny % 100 < 2) {
+            s_shinyCounter += 1;
             pkmnIndex = uint256(pkmnType) + 10;
         } else {
+            s_commonCounter += 1;
             pkmnIndex = uint256(pkmnType);
         }
-        s_tokenCounter += s_tokenCounter;
+        s_tokenCounter += 1;
         _safeMint(pkmnOwner, newTokenId);
         _setTokenURI(newTokenId, s_pkmnUris[pkmnIndex]);
         emit NftMinted(pkmnType, pkmnOwner);
@@ -168,6 +172,14 @@ contract CatchNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
 
     function getTokenCounter() public view returns (uint256) {
         return s_tokenCounter;
+    }
+
+    function getcommonCounter() public view returns (uint256) {
+        return s_commonCounter;
+    }
+
+    function getShinyCounter() public view returns (uint256) {
+        return s_shinyCounter;
     }
 }
 
