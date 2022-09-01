@@ -162,7 +162,7 @@ contract CatchNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         return i_mintFee;
     }
 
-    function getDogTokenUris(uint256 index) public view returns (string memory) {
+    function getPKMNTokenUris(uint256 index) public view returns (string memory) {
         return s_pkmnUris[index];
     }
 
@@ -174,12 +174,20 @@ contract CatchNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         return s_tokenCounter;
     }
 
-    function getcommonCounter() public view returns (uint256) {
+    function getCommonCounter() public view returns (uint256) {
         return s_commonCounter;
     }
 
     function getShinyCounter() public view returns (uint256) {
         return s_shinyCounter;
+    }
+
+    function getIsItDayTime() public view returns (bool) {
+        if ((block.timestamp / 3600) % 24 <= 12) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 
