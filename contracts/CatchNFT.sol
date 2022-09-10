@@ -70,7 +70,7 @@ contract CatchNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         _initializeContract(pkmnUris);
     }
 
-    function catchNft() public payable returns (uint256 requestId) {
+    function catchPkmn() public payable returns (uint256 requestId) {
         if (mintEnabled == false) {
             revert CatchNft__MintSwitchedOffbyOwner();
         }
@@ -134,7 +134,7 @@ contract CatchNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
             // if (moddedRng >= cumulativeSum && moddedRng < cumulativeSum + chanceArray[i]) {
             if (moddedRng >= cumulativeSum && moddedRng < chanceArray[i]) {
                 if ((block.timestamp / 3600) % 24 > 12) {
-                    //used to check if night or day(00-12day, 13-24night)
+                    //used to check if night or day(00-12 is day, 13-24 is night)
                     return Pkmns(i + 5);
                 } else {
                     return Pkmns(i);
@@ -147,7 +147,7 @@ contract CatchNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     }
 
     function mintSwitch(bool _mintEnabled) external onlyOwner {
-        mintEnabled = _mintEnabled; //it allows us to change true or false
+        mintEnabled = _mintEnabled; //it allows us public to mint(true) or not(false)
     }
 
     function withdraw() public onlyOwner {

@@ -148,7 +148,7 @@ const handleTokenUris = async () => {
     return tokenUris
 }
 export default deployCatchNft
-deployCatchNft.tags = ["all", "randomipfs", "main"]
+deployCatchNft.tags = ["all", "catch", "main"]
 
 //  Pikachu...
 //   'ipfs://QmTs42zi2Vx9WAF4RYxzJykP3nuLPgqdAj3FmzRXyE3s82',
