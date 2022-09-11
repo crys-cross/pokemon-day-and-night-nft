@@ -10,7 +10,7 @@ import { CatchNft, VRFCoordinatorV2Mock } from "../../typechain-types"
     : describe("CatchNft Unit Test", () => {
           let catchNftPlayer: CatchNft
           let catchNftContract: CatchNft
-          let catchNftDeployer: CatchNft
+          let catchNftOwner: CatchNft
           let vrfCoordinatorV2Mock: VRFCoordinatorV2Mock
           let mintFee: BigNumber
           let accounts: SignerWithAddress[]
@@ -18,16 +18,16 @@ import { CatchNft, VRFCoordinatorV2Mock } from "../../typechain-types"
           let player: SignerWithAddress
 
           beforeEach(async () => {
-              accounts = await ethers.getSigners() //could also be done with getNamedAccounts
+              accounts = await ethers.getSigners()
               deployer = accounts[0]
               player = accounts[1]
               await deployments.fixture(["mocks", "catch"])
               vrfCoordinatorV2Mock = await ethers.getContract("VRFCoordinatorV2Mock")
-              catchNftContract = await ethers.getContract("LotteryTrio")
-              catchNftDeployer = catchNftContract.connect(deployer)
+              catchNftContract = await ethers.getContract("CatchNft")
+              catchNftOwner = catchNftContract.connect(deployer)
               catchNftPlayer = catchNftContract.connect(player)
               mintFee = await catchNftPlayer.getMintFee()
-              await catchNftDeployer.mintSwitch(true)
+              await catchNftOwner.mintSwitch(true)
           })
           describe("constructor", async () => {
               it("sets starting values correctly", async () => {
@@ -39,13 +39,14 @@ import { CatchNft, VRFCoordinatorV2Mock } from "../../typechain-types"
           })
           describe("catchPkmn", async () => {
               it("fails if mintSwitch is disabled", async () => {
-                  await catchNftDeployer.mintSwitch(false)
+                  await catchNftOwner.mintSwitch(false)
                   await expect(
                       catchNftPlayer.catchPkmn({ value: mintFee.toString() })
-                  ).to.be.revertedWith("CatchNft__MintSwitchedOffbyOwner")
+                  ).to.be.revertedWithCustomError(catchNftOwner, "CatchNft__MintSwitchedOffbyOwner")
               })
               it("fails if not enought ETH sent", async () => {
-                  await expect(catchNftPlayer.catchPkmn()).to.be.revertedWith(
+                  await expect(catchNftPlayer.catchPkmn()).to.be.revertedWithCustomError(
+                      catchNftPlayer,
                       "CatchNft__NeedMoreETHSennt"
                   )
               })
@@ -80,29 +81,11 @@ import { CatchNft, VRFCoordinatorV2Mock } from "../../typechain-types"
                       }
                   })
               })
-              describe("getHardPityCharacter", async () => {
-                  it("description", async () => {
-                      //a
-                  })
-              })
-              describe("get10thRateCharacter", async () => {
-                  it("description", async () => {
-                      //a
-                  })
-              })
-              describe("getRegularCharacter", async () => {
-                  it("description", async () => {
-                      //a
-                  })
-              })
-              describe("getSoftPityCharacter", async () => {
-                  it("description", async () => {
-                      //a
-                  })
-              })
-              describe("_initializeContract", async () => {
-                  it("description", async () => {
-                      //a
+              describe("withdraw", async () => {
+                  it("only owner can withdraw", async () => {
+                      await catchNftOwner.withdraw()
+                      const balance = await ethers.provider.getBalance(catchNftContract.address)
+                      assert.equal(balance.toString(), "0")
                   })
               })
           })

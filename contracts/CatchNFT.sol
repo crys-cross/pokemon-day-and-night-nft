@@ -13,9 +13,18 @@ error CatchNft__TransferFailed();
 error CatchNft__AlreadyInitialized();
 error CatchNft__MintSwitchedOffbyOwner();
 
+/**
+ *  @title BLOCKCHAIN POKEMON NFT
+ *  @author crys
+ *  @notice This is demo smartcontract game using very similar encounter/catch mechanics to the Pokemon Game
+ *  @dev This uses Chainlink VRF for randomizaton and some math
+ *  to simulate as close as possible rates to the pokemon game.
+ *  Uses block.timestamp for time to separate night and day pokemon.
+ *  Higher chance(1%) than the game to catch a shiny pokemon
+ **/
+
 contract CatchNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     // Type Declaration
-
     enum Pkmns {
         PIKACHU,
         CHARMANDER,
@@ -91,16 +100,15 @@ contract CatchNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
     function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords) internal override {
         address pkmnOwner = s_requestIdToSender[requestId];
         uint256 newTokenId = s_tokenCounter;
-        uint256 moddedRng = randomWords[0] % MAX_CHANCE_VALUE; //0-99
-        uint256 moddedRngShiny = randomWords[1] % MAX_CHANCE_VALUE; //0-99 //draft shiny check with shiny function
-        // -DAY-NIGHT
-        // 0-5 -> PIKACHU, MARILL
+        uint256 moddedRng = randomWords[0] % MAX_CHANCE_VALUE;
+        uint256 moddedRngShiny = randomWords[1] % MAX_CHANCE_VALUE;
+        // ----------DAY------NIGHT
+        // 00-05 -> PIKACHU, MARILL
         // 06-15 -> CHARMANDER, CYNDAQUIUL
         // 16-25 -> SQUIRTLE, TOTODILE
         // 26-35 -> BULBASAUR, CHIKORITA
         // 36-99 -> PIDGEY, HOOTHOOT
         Pkmns pkmnType = getPkmn(moddedRng);
-        //function for shiny chance using randomWords[1]
         uint256 pkmnIndex = 0;
         if (moddedRngShiny % 100 < 2) {
             s_shinyCounter += 1;
@@ -131,7 +139,6 @@ contract CatchNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         uint256 cumulativeSum = 0;
         uint256[5] memory chanceArray = getChanceArray();
         for (uint256 i = 0; i < chanceArray.length; i++) {
-            // if (moddedRng >= cumulativeSum && moddedRng < cumulativeSum + chanceArray[i]) {
             if (moddedRng >= cumulativeSum && moddedRng < chanceArray[i]) {
                 if ((block.timestamp / 3600) % 24 > 12) {
                     //used to check if night or day(00-12 is day, 13-24 is night)
@@ -140,22 +147,28 @@ contract CatchNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
                     return Pkmns(i);
                 }
             }
-            // cumulativeSum = cumulativeSum + chanceArray[i];
             cumulativeSum = chanceArray[i];
         }
         revert CatchNft__RangeOutOfBounds();
     }
 
+    /*enable/disable mint here*/
     function mintSwitch(bool _mintEnabled) external onlyOwner {
         mintEnabled = _mintEnabled; //it allows us public to mint(true) or not(false)
     }
 
+    /*withdraw function for admin*/
     function withdraw() public onlyOwner {
         uint256 amount = address(this).balance;
         (bool success, ) = payable(msg.sender).call{value: amount}("");
         if (!success) {
             revert CatchNft__TransferFailed();
         }
+    }
+
+    /*View/Pure Functions*/
+    function getIsMintSwitchEnabled() public view returns (bool) {
+        return mintEnabled;
     }
 
     function getMintFee() public view returns (uint256) {
@@ -190,19 +203,3 @@ contract CatchNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         }
     }
 }
-
-//Pokemon Rate
-//Day 5% pikachu gen1(10%,10%,10%) common(pidgey) 65%
-//Night 5% evee gen2(10%,10%,10%) common(hoothoot) 65%
-//Shiny 1%
-
-//TODO
-//draft set enums values with arrays of [normal, shiny]
-//convert now to time✅
-//set mint function for day and night(if statement to call)✅
-//randomWords[0] to choose random pkmn from day or night✅
-//randomWords[1] minting shiny/or not pokemon irregardless of pokemon rarity
-//set random pokemonstats(TBA)
-//TODO-2
-//set pokemon battle
-//set pokemon level ups(refer to defi kingdoms implementation)
