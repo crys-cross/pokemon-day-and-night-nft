@@ -166,6 +166,11 @@ contract CatchNft is VRFConsumerBaseV2, ERC721URIStorage, Ownable {
         }
     }
 
+    /*for experimental burn nft*/
+    function release(uint256 tokenId) public {
+        _burn(tokenId);
+    }
+
     /*View/Pure Functions*/
     function getIsMintSwitchEnabled() public view returns (bool) {
         return mintEnabled;
