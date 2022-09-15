@@ -102,6 +102,7 @@ const deployCatchNft: DeployFunction = async (hre: HardhatRuntimeEnvironment) =>
     // await storeImages(imagesLocation)
     const args = [
         vrfCoordinatorV2Address,
+        // `0xbd13f08b8352A3635218ab9418E340c60d6Eb418`,
         networkConfig[chainId]["mintFee"],
         subscriptionId,
         networkConfig[chainId]["gasLane"],

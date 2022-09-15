@@ -9,6 +9,7 @@ import { HardhatUserConfig } from "hardhat/config"
  */
 
 const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL
+const MUMBAI_RPC_URL = process.env.MUMBAI_RPC_URL
 const PRIVATE_KEY = process.env.PRIVATE_KEY || ""
 const COINMARKETCAP_API_KEY = process.env.COINMARKETCAP_API_KEY
 
@@ -43,12 +44,12 @@ const config: HardhatUserConfig = {
             chainId: 4002,
         },
         fujitest: {
-            url: "https://api.avax-test.network/ext/bc/C/rpc" || "",
+            url: "https://avalanchetestapi.terminet.io/ext/bc/C/rpc" || "",
             accounts: [PRIVATE_KEY],
             chainId: 43113,
         },
         mumbaitest: {
-            url: "https://polygon-testnet.public.blastapi.io" || "",
+            url: MUMBAI_RPC_URL || "",
             accounts: [PRIVATE_KEY],
             chainId: 80001,
         },
@@ -94,9 +95,9 @@ const config: HardhatUserConfig = {
     etherscan: {
         apiKey: {
             goerli: ETHERSCAN_API_KEY!,
-            fantomtest: FTMSCAN_API_KEY,
-            fujitest: SNOWTRACE_API_KEY,
-            mumbaitest: POLYGONSCAN_API_KEY,
+            ftmTestnet: FTMSCAN_API_KEY,
+            avalancheFujiTestnet: SNOWTRACE_API_KEY,
+            polygonMumbai: POLYGONSCAN_API_KEY,
         },
     },
     namedAccounts: {
