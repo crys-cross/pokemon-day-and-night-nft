@@ -49,7 +49,7 @@ export const networkConfig: networkConfigInfo = {
     },
     4002: {
         name: "fantom-test",
-        vrfCoordinatorV2: "	0xbd13f08b8352A3635218ab9418E340c60d6Eb418",
+        vrfCoordinatorV2: "0xbd13f08b8352A3635218ab9418E340c60d6Eb418",
         mintFee: "10000000000000000", // 0.01 ETH
         // entranceFee: ethers.utils.parseEther("0.01"),
         subscriptionId: "93",
